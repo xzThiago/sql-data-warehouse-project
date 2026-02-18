@@ -64,7 +64,7 @@ BEGIN
             cst_key,
             cst_firstname,
             cst_lastname,
-            cst_material_status,
+            cst_marital_status,
             cst_gndr,
             cst_create_date
         )
@@ -73,7 +73,7 @@ BEGIN
             cst_key,
             cst_firstname,
             cst_lastname,
-            cst_material_status,
+            cst_marital_status,
             cst_gndr,
             cst_create_date
         FROM (
@@ -83,10 +83,10 @@ BEGIN
                 TRIM(cst_firstname) AS cst_firstname,
                 TRIM(cst_lastname) AS cst_lastname,
                 CASE 
-                    WHEN UPPER(TRIM(cst_material_status)) = 'S' THEN 'Single'
-                    WHEN UPPER(TRIM(cst_material_status)) = 'M' THEN 'Married'
+                    WHEN UPPER(TRIM(cst_marital_status)) = 'S' THEN 'Single'
+                    WHEN UPPER(TRIM(cst_marital_status)) = 'M' THEN 'Married'
                     ELSE 'n/a'
-                END AS cst_material_status,  -- Normaliza os valores do estado civil para um formato legível
+                END AS cst_marital_status,  -- Normaliza os valores do estado civil para um formato legível
                 CASE 
                     WHEN UPPER(TRIM(cst_gndr)) = 'F' THEN 'Female'
                     WHEN UPPER(TRIM(cst_gndr)) = 'M' THEN 'Male'
