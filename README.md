@@ -90,7 +90,7 @@ Esses insights capacitam os stakeholders com métricas-chave do negócio, apoian
 
 - 🔎 **Exploratory Data Analysis (EDA)**  
   Análise exploratória inicial para compreender estrutura dos dados, valores únicos, dimensões, períodos e métricas principais.  
-  ➜ [Abrir Script](scripts/data_analytics/Exploratory_Data_Analysis_EDA.sql)
+  ➜ [Abrir Script](scripts/data_analytics/Exploratory_Data_Analysis_EDA_.sql)
 
 - 📈 **Advanced Data Analysis**  
   Análises avançadas utilizando técnicas como tendências temporais, métricas cumulativas, análise de desempenho, análise proporcional e segmentação.  
