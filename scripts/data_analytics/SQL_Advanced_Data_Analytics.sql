@@ -2,21 +2,35 @@ USE DataWarehouse;
 
 /*
 ======================
-SQL - Análise de Dados
+SQL - AnÃ¡lise de Dados
 ======================
+
+Este projeto tem como objetivo explorar os dados de vendas de forma mais 
+aprofundada utilizando tÃ©cnicas de anÃ¡lise avanÃ§ada em SQL. 
+A anÃ¡lise busca identificar padrÃµes de comportamento, desempenho e tendÃªncias ao longo do tempo.
+
+Durante o projeto sÃ£o aplicadas diferentes abordagens analÃ­ticas, 
+incluindo anÃ¡lise de tendÃªncias temporais, mÃ©tricas cumulativas, 
+avaliaÃ§Ã£o de desempenho, anÃ¡lise proporcional (parte-todo) e segmentaÃ§Ã£o de dados.
+
+AlÃ©m disso, sÃ£o construÃ­dos relatÃ³rios analÃ­ticos focados em clientes e produtos, 
+consolidando mÃ©tricas relevantes e KPIs importantes para apoiar a tomada de decisÃµes baseadas em dados.
+
+Importante:
+No final de cada script Ã© possÃ­vel visualizar o resultado da consulta.
 */
 
 /*
-1: Tendências de mudança ao longo do tempo.
+1: TendÃªncias de mudanÃ§a ao longo do tempo.
 
-Analise como uma métrica evolui ao longo do tempo. 
-Ajuda a acompanhar tendências e a identificar a sazonalidade em seus dados.
+Analise como uma mÃ©trica evolui ao longo do tempo. 
+Ajuda a acompanhar tendÃªncias e a identificar a sazonalidade em seus dados.
 
 Tarefa: Analisar o desempenho de vendas ao longo do tempo.
 */
 
 SELECT
---  DATETRUNC(month, order_date) AS data_pedido, -- Exemplo de saída: 2010-12-01 | 2011-01-01...
+--  DATETRUNC(month, order_date) AS data_pedido, -- Exemplo de saÃ­da: 2010-12-01 | 2011-01-01...
 	FORMAT(order_date, 'yyyy-MM') AS data_pedido,
 	SUM(sales_amount) AS vendas_totais,
 	COUNT(DISTINCT customer_key) AS clientes_totais,
@@ -27,17 +41,17 @@ GROUP BY FORMAT(order_date, 'yyyy-MM')
 ORDER BY FORMAT(order_date, 'yyyy-MM');
 
 /*
-2: Análise cumulativa
+2: AnÃ¡lise cumulativa
 
 Agregar os dados progressivamente ao longo do tempo.
-Ajuda a entender se nossa empresa está crescendo ou em declínio.
+Ajuda a entender se nossa empresa estÃ¡ crescendo ou em declÃ­nio.
 
-Tarefa: Calcular o total de vendas por mês e o total acumulado de vendas ao longo do tempo.
+Tarefa: Calcular o total de vendas por mÃªs e o total acumulado de vendas ao longo do tempo.
 */
 
 /*
 ========
-Por MÊS
+Por MÃŠS
 ========
 */
 SELECT
@@ -71,7 +85,7 @@ FROM (
 ) t
 /*
 ============================
-Outro Exemplo mais avançado
+Outro Exemplo mais avanÃ§ado
 ============================
 */
 
@@ -88,13 +102,13 @@ analise_vendas_mes_acumulado AS (
 		data_pedido,
 		vendas_totais,
 		SUM(vendas_totais) OVER(ORDER BY data_pedido) AS total_vendas_acumulado_por_mes,
-		LAG(vendas_totais) OVER(ORDER BY data_pedido) AS vendas_anterior -- Busca o valor do mês anterior para o cálculo
+		LAG(vendas_totais) OVER(ORDER BY data_pedido) AS vendas_anterior -- Busca o valor do mÃªs anterior para o cÃ¡lculo
 	FROM analise_vendas_mes
 )
 SELECT
 	data_pedido,
 	vendas_totais,
-	-- Cálculo da variação percentual
+	-- CÃ¡lculo da variaÃ§Ã£o percentual
 	CASE 
 		WHEN vendas_anterior IS NULL THEN NULL
 		ELSE CAST(CAST(((vendas_totais - vendas_anterior) * 100.0 / vendas_anterior) AS DECIMAL(10,2)) AS NVARCHAR) + ' %'
@@ -105,12 +119,12 @@ SELECT
 		WHEN vendas_anterior IS NULL THEN 'Sem dados anteriores'
 		WHEN vendas_totais > vendas_anterior THEN 'Crescimento'
 		WHEN vendas_totais < vendas_anterior THEN 'Declinio'
-		ELSE 'Estável'
+		ELSE 'EstÃ¡vel'
 	END AS status_desempenho,
 	total_vendas_acumulado_por_mes
 FROM analise_vendas_mes_acumulado;
 /*
-EXEMPLO DE SAÍDA ESPERADA:
+EXEMPLO DE SAÃDA ESPERADA:
 | data_pedido | vendas_totais | percentual_variacao| status_desempenho   | total_vendas_acumulado_por_mes|
 |-------------|---------------|--------------------|---------------------|-------------------------------|
 | 2010-12-01  | 43419         | NULL               | Sem dados anteriores| 43419                         |
@@ -120,13 +134,13 @@ EXEMPLO DE SAÍDA ESPERADA:
 
 
 /*
-3: Análise de Desempenho
+3: AnÃ¡lise de Desempenho
 
-Comparação do valor atual com um valor alvo.
+ComparaÃ§Ã£o do valor atual com um valor alvo.
 Ajuda a medir o sucesso e comparar o desempenho.
 
 Tarefa: Analise o desempenho anual dos produtos comparando suas vendas 
-		com a média de vendas dos produtos e com as vendas do ano anterior.
+		com a mÃ©dia de vendas dos produtos e com as vendas do ano anterior.
 */
 WITH vendas_anuais_por_produto AS (
 	SELECT
@@ -149,9 +163,9 @@ analise_desempenho AS (
 		AVG(vendas_atuais) OVER(PARTITION BY product_name) AS media_venda,
 		vendas_atuais - AVG(vendas_atuais) OVER(PARTITION BY product_name) AS diferenca_media,
 		CASE	
-			WHEN vendas_atuais - AVG(vendas_atuais) OVER(PARTITION BY product_name) > 0 THEN 'Acima da Média'
-			WHEN vendas_atuais - AVG(vendas_atuais) OVER(PARTITION BY product_name) < 0 THEN 'Abaixo da Média'
-			ELSE 'Sem alteração'
+			WHEN vendas_atuais - AVG(vendas_atuais) OVER(PARTITION BY product_name) > 0 THEN 'Acima da MÃ©dia'
+			WHEN vendas_atuais - AVG(vendas_atuais) OVER(PARTITION BY product_name) < 0 THEN 'Abaixo da MÃ©dia'
+			ELSE 'Sem alteraÃ§Ã£o'
 		END status_mudanca_media,
 		LAG(vendas_atuais) OVER(PARTITION BY product_name ORDER BY data_pedido_anual) AS vendas_ano_anterior
 	FROM vendas_anuais_por_produto
@@ -169,28 +183,28 @@ SELECT top 3
 	CASE
 		WHEN vendas_atuais - vendas_ano_anterior > 0 THEN 'Aumentou'
 		WHEN vendas_atuais - vendas_ano_anterior < 0 THEN 'Diminuiu'
-		ELSE 'Sem alteração'
+		ELSE 'Sem alteraÃ§Ã£o'
 	END AS variacao_ano_anteiror
 FROM analise_desempenho
 ORDER BY
 	product_name,
 	data_pedido_anual
 /*
-EXEMPLO DE SAÍDA
+EXEMPLO DE SAÃDA
 +--------------------+-------------------------+----------------+-------------+-----------------+----------------------+---------------------+------------------------+-----------------------+
 | data_pedido_anual  | product_name            | vendas_atuais  | media_venda | diferenca_media | status_mudanca_media | vendas_ano_anterior | diferenca_ano_anterior | variacao_ano_anteiror |
 +--------------------+-------------------------+----------------+-------------+-----------------+----------------------+---------------------+------------------------+-----------------------+
-| 2012               | All-Purpose Bike Stand  | 159            | 13197       | -13038          | Abaixo da Média      | NULL                | NULL                   | Sem alteração         |
-| 2013               | All-Purpose Bike Stand  | 37683          | 13197       | 24486           | Acima da Média       | 159                 | 37524                  | Aumentou              |
-| 2014               | All-Purpose Bike Stand  | 1749           | 13197       | -11448          | Abaixo da Média      | 37683               | -35934                 | Diminuiu              |
+| 2012               | All-Purpose Bike Stand  | 159            | 13197       | -13038          | Abaixo da MÃ©dia      | NULL                | NULL                   | Sem alteraÃ§Ã£o         |
+| 2013               | All-Purpose Bike Stand  | 37683          | 13197       | 24486           | Acima da MÃ©dia       | 159                 | 37524                  | Aumentou              |
+| 2014               | All-Purpose Bike Stand  | 1749           | 13197       | -11448          | Abaixo da MÃ©dia      | 37683               | -35934                 | Diminuiu              |
 +--------------------+-------------------------+----------------+-------------+-----------------+----------------------+---------------------+------------------------+-----------------------+
 */
 
 /*
-4: Análise Proporcional Parte-todo
+4: AnÃ¡lise Proporcional Parte-todo
 
-Analisa o desempenho de uma parte individual em comparação com o todo, 
-permitindo-nos entender qual categoria tem o maior impacto nos negócios.
+Analisa o desempenho de uma parte individual em comparaÃ§Ã£o com o todo, 
+permitindo-nos entender qual categoria tem o maior impacto nos negÃ³cios.
 
 Tarefa: Quais categorias contribuem mais para as vendas totais?
 */
@@ -213,7 +227,7 @@ FROM vendas_por_categoria
 ORDER BY vendas_totais DESC;
 
 /*
-EXEMPLO DE SAÍDA
+EXEMPLO DE SAÃDA
 +-------------+---------------+--------------------+----------------------------+
 | category    | vendas_totais | total_geral_vendas | porcentagem_do_total_geral |
 +-------------+---------------+--------------------+----------------------------+
@@ -225,10 +239,10 @@ EXEMPLO DE SAÍDA
 
 
 /*
-5: Segmentação de Dados
+5: SegmentaÃ§Ã£o de Dados
 
-Agrupando os dados com base em um intervalo específico.
-Ajuda a compreender a correlação entre duas medidas.
+Agrupando os dados com base em um intervalo especÃ­fico.
+Ajuda a compreender a correlaÃ§Ã£o entre duas medidas.
 
 Tarefa: Segmentar os produtos em faixas de custo e contar quantos produtos
 		se enquadram em cada segmento.
@@ -254,25 +268,25 @@ FROM segmentacao_produto
 GROUP BY faixa_custo
 ORDER BY produtos_totais DESC;
 /*
-EXEMPLO DE SAÍDA
+EXEMPLO DE SAÃDA
 
 | faixa_custo    | produtos_totais |
 | -------------- | --------------- |
 | Abaixo de 100  | 108             |
-| 100–499        | 101             |
-| 500–1000       | 45              |
+| 100Â–499        | 101             |
+| 500Â–1000       | 45              |
 | Acima de 1000  | 39              |
 */
 
 /*
-5: Segmentação de Dados
+5: SegmentaÃ§Ã£o de Dados
 
 Tarefa: 
-Agrupe os clientes em três segmentos com base no comportamento de gastos:
-	- VIP: Clientes com pelo menos 12 meses de histórico e gastos superiores a $5.000.
-	- Regular: Clientes com pelo menos 12 meses de histórico, mas com gastos de até $5.000 ou menos.
+Agrupe os clientes em trÃªs segmentos com base no comportamento de gastos:
+	- VIP: Clientes com pelo menos 12 meses de histÃ³rico e gastos superiores a $5.000.
+	- Regular: Clientes com pelo menos 12 meses de histÃ³rico, mas com gastos de atÃ© $5.000 ou menos.
 	- Novo: Clientes com tempo de relacionamento inferior a 12 meses.
-E encontre o número total de clientes em cada grupo.
+E encontre o nÃºmero total de clientes em cada grupo.
 */
 WITH gasto_do_cliente AS (
 	SELECT
@@ -304,9 +318,9 @@ FROM (
 ) t
 GROUP BY segmentacao_clientes;
 /*
-EXEMPLO DE SÁIDA
+EXEMPLO DE SÃIDA
 
-| Segmentação de Clientes | Total de Clientes |
+| SegmentaÃ§Ã£o de Clientes | Total de Clientes |
 | ----------------------- | ----------------- |
 | Novo                    | 14631             |
 | Regular                 | 2198              |
@@ -315,25 +329,25 @@ EXEMPLO DE SÁIDA
 
  /*
  ====================================
- Construção do Relatório de Clientes
+ ConstruÃ§Ã£o do RelatÃ³rio de Clientes
  ====================================
 
 Objetivo:
-	- Este relatório consolida métricas importantes e comportamentos dos clientes.
+	- Este relatÃ³rio consolida mÃ©tricas importantes e comportamentos dos clientes.
 
 Destaques:
-	1. Coleta informações essenciais como nome do cliente, idade e detalhes de transações.
-	2. Agrega métricas no nível do cliente:
+	1. Coleta informaÃ§Ãµes essenciais como nome do cliente, idade e detalhes de transaÃ§Ãµes.
+	2. Agrega mÃ©tricas no nÃ­vel do cliente:
 		- total de pedidos
 		- valor total em vendas
 		- quantidade total comprada
 		- total de produtos diferentes
 		- tempo de relacionamento (em meses)
-	3. Segmenta os clientes em categorias (VIP, Regular, Novo) e também por faixa etária.
+	3. Segmenta os clientes em categorias (VIP, Regular, Novo) e tambÃ©m por faixa etÃ¡ria.
 	4. Calcula KPIs importantes:
-		- recência (meses desde o último pedido)
-		- valor médio por pedido
-		- gasto médio mensal
+		- recÃªncia (meses desde o Ãºltimo pedido)
+		- valor mÃ©dio por pedido (ticket mÃ©dio)
+		- gasto mÃ©dio mensal
 */
 IF OBJECT_ID('gold.vw_relatorio_clientes' , 'V') IS NOT NULL
 	DROP VIEW gold.vw_relatorio_clientes;
@@ -357,7 +371,7 @@ WITH consulta_base AS (
 		ON f.customer_key = c.customer_key
 	WHERE f.order_date IS NOT NULL
 ),
--- 2: Agregação de Clientes: Resume métricas principais no nível do cliente
+-- 2: AgregaÃ§Ã£o de Clientes: Resume mÃ©tricas principais no nÃ­vel do cliente
 agregacao_clientes AS (
 	SELECT
 		id_cliente,
@@ -384,7 +398,7 @@ SELECT
 	nome_cliente,
 	idade,
 
-	-- Classificação por faixa etária
+	-- ClassificaÃ§Ã£o por faixa etÃ¡ria
 	CASE
 		WHEN idade < 20 THEN 'Menos de 20'
 		WHEN idade BETWEEN 20 AND 29 THEN '20-29'
@@ -394,7 +408,7 @@ SELECT
 		ELSE '60+'
 	END AS faixa_etaria,
 
-	-- Segmentação de clientes baseada em valor gasto e tempo de relacionamento,
+	-- SegmentaÃ§Ã£o de clientes baseada em valor gasto e tempo de relacionamento,
 	CASE 
 		WHEN tempo_relacionamento_meses >= 12 AND valor_total_vendas > 5000 THEN 'VIP'
 		WHEN tempo_relacionamento_meses >= 12 AND valor_total_vendas <= 5000 THEN 'Regular'
@@ -403,7 +417,7 @@ SELECT
 
 	dt_ultimo_pedido,
 
-	-- Recência: meses desde a ultima compra
+	-- RecÃªncia: meses desde a ultima compra
 	DATEDIFF(MONTH, dt_ultimo_pedido, GETDATE()) AS meses_desde_ultima_compra,
 
 	total_pedidos, 
@@ -412,13 +426,13 @@ SELECT
 	total_produtos_diferentes, 
 	tempo_relacionamento_meses,
 
-	-- Valor médio por pedido
+	-- Valor mÃ©dio por pedido
 	CASE
 		WHEN valor_total_vendas = 0 THEN 0
 		ELSE valor_total_vendas / total_pedidos
 	END AS valor_medio_por_pedido,
 
-	-- Gasto médio mensal
+	-- Gasto mÃ©dio mensal
 	CASE
 		WHEN tempo_relacionamento_meses = 0 THEN valor_total_vendas
 		ELSE valor_total_vendas / tempo_relacionamento_meses
@@ -431,28 +445,28 @@ SELECT * FROM gold.vw_relatorio_clientes;
 
 /* 
 ===================================
-Construção do Relatório de Produtos
+ConstruÃ§Ã£o do RelatÃ³rio de Produtos
 ===================================
 
 Objetivo:
-  - Este relatório consolida métricas e comportamentos importantes dos produtos.
+  - Este relatÃ³rio consolida mÃ©tricas e comportamentos importantes dos produtos.
 
 Destaques:
-  1. Coleta informações essenciais como nome do produto, categoria, subcategoria e custo.
-  2. Agrega métricas no nível do produto:
+  1. Coleta informaÃ§Ãµes essenciais como nome do produto, categoria, subcategoria e custo.
+  2. Agrega mÃ©tricas no nÃ­vel do produto:
      - total de pedidos
      - valor total de vendas
      - quantidade total vendida
-     - total de clientes únicos
+     - total de clientes Ãºnicos
      - tempo de vida do produto (em meses)
   3. Segmenta produtos com base na receita gerada para identificar:
      - Produtos de Alto Desempenho
-     - Produtos de Desempenho Médio
+     - Produtos de Desempenho MÃ©dio
      - Produtos de Baixo Desempenho
   4. Calcula KPIs importantes:
-     - recência (meses desde a última venda)
-     - receita média por pedido
-     - receita média mensal 
+     - recÃªncia (meses desde a Ãºltima venda)
+     - receita mÃ©dia por pedido
+     - receita mÃ©dia mensal 
 */
 
 IF OBJECT_ID('gold.vw_relatorio_produtos', 'V') IS NOT NULL
@@ -478,7 +492,7 @@ WITH consulta_base AS (
 		ON f.product_key = p.product_key
 	WHERE f.order_date IS NOT NULL
 ),
--- 2. Agregação de Produtos: Resume métricas principais no nível do produto
+-- 2. AgregaÃ§Ã£o de Produtos: Resume mÃ©tricas principais no nÃ­vel do produto
 agregacao_produtos AS (
 	SELECT
 		id_produto,
@@ -512,13 +526,13 @@ SELECT
 	custo_produto,
 	dt_ultima_venda,
 
-	-- Recência: meses desde a ultima venda
+	-- RecÃªncia: meses desde a ultima venda
 	DATEDIFF(MONTH, dt_ultima_venda, GETDATE()) AS meses_desde_ultima_venda,
 
-	-- Segmentação de produtos por desempenho de vendas
+	-- SegmentaÃ§Ã£o de produtos por desempenho de vendas
 	CASE
 		WHEN valor_total_vendas > 50000 THEN 'Alto Desempenho'
-		WHEN valor_total_vendas >= 10000 THEN 'Desempenho Médio'
+		WHEN valor_total_vendas >= 10000 THEN 'Desempenho MÃ©dio'
 		ELSE 'Baixo Desempenho'
 	END AS segmento_produto,
 
@@ -529,17 +543,18 @@ SELECT
 	total_clientes_unicos,
 	preco_medio_venda,
 
-	-- Receita média por pedido
+	-- Receita mÃ©dia por pedido
 	CASE 
 		WHEN valor_total_vendas = 0 THEN 0
 		ELSE valor_total_vendas / total_pedidos
 	END AS receita_media_por_pedido,
 
-	-- Receita média mensal
+	-- Receita mÃ©dia mensal
 	CASE 
 		WHEN tempo_vida_meses = 0 THEN valor_total_vendas
 		ELSE valor_total_vendas / tempo_vida_meses
 	END AS receita_media_mensal
 FROM agregacao_produtos;
+
 
 SELECT * FROM gold.vw_relatorio_produtos;
