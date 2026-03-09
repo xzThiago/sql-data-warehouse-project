@@ -1,14 +1,31 @@
 /*
 ==================================================
-Projeto SQL - An·lise ExploratÛria de Dados (EDA)
+Projeto SQL - An√°lise Explorat√≥ria de Dados (EDA)
 ==================================================
+
+EDA (Exploratory Data Analysis) √© o processo de explorar e compreender os dados 
+antes de realizar an√°lises mais avan√ßadas ou construir modelos.
+
+Neste projeto segui os seguintes passos de an√°lise:
+ - Entender a estrutura do banco
+ - Explorar valores √∫nicos
+ - Analisar dimens√µes (clientes e produtos)
+ - Entender o per√≠odo dos dados
+ - Calcular m√©tricas principais
+ - Comparar categorias
+ - Identificar rankings
+ - Encontrar padr√µes importantes
+
+Importante:
+	No final de cada script √© poss√≠vel visualizar o resultado da consulta.
 */
+
 USE DataWarehouse;
 
--- Explory ALL Objects in the Database
+-- Explorar todos os objetos do banco de dados
 SELECT * FROM INFORMATION_SCHEMA.COLUMNS;
 
--- Explory ALL Columns in the Database
+-- Explorar todas as colunas do banco de dados
 SELECT
 	TABLE_CATALOG,
 	TABLE_SCHEMA,
@@ -21,22 +38,22 @@ WHERE TABLE_NAME = 'dim_customers';
 
 /*
 =============================================
-ExploraÁ„o das Tabelas de Clientes e Produtos
+Explora√ß√£o das Tabelas de Clientes e Produtos
 =============================================
 
-Identificar os valores ˙nicos (ou categorias) em cada dimens„o.
+Identificar os valores √∫nicos (ou categorias) em cada dimens√£o.
 
 Reconhecer como os dados podem ser agrupados ou segmentados, 
-o que È ˙til para an·lises posteriores.
+o que √© √∫til para an√°lises posteriores.
 */
 
 -- Explorar todos os paises ou de onde vem nossos clientes
 SELECT DISTINCT
 	country
 FROM gold.dim_customers;
--- 6 PaÌses distintos 
+-- 6 Pa√≠ses distintos 
 
--- Explorar informaÁıes relevantes de clientes
+-- Explorar informa√ß√µes relevantes de clientes
 SELECT
 	COUNT(DISTINCT customer_id) AS total_cliente
 FROM gold.dim_customers;
@@ -47,14 +64,14 @@ SELECT
 	COUNT(customer_id) AS total_cliente
 FROM gold.dim_customers
 GROUP BY gender;
--- Male 9341 | Female 9128 | 15 n/a
+-- Homem 9341 | Mulher 9128 | 15 n/a
 
 SELECT
 	marital_status,
 	COUNT(customer_id) AS total_cliente
 FROM gold.dim_customers
 GROUP BY marital_status;
--- Married 10011 | Sigle 8473
+-- Casado 10011 | Solteiro 8473
 
 SELECT
 	gender,
@@ -62,10 +79,10 @@ SELECT
 	COUNT(customer_id) AS total_cliente
 FROM gold.dim_customers
 GROUP BY gender, marital_status;
--- Male   Single 4081 | Male   Married 5260
--- Female Single 4385 | Female Married 4743
+-- Homem   Solteiro 4081 | Homem   Casado 5260
+-- Mulher Solteira  4385 | Mulher  Casada 4743
 
--- Explorar todas as cartegorias "as principais divisıes - subcategorias"
+-- Explorar todas as cartegorias "as principais divis√µes - subcategorias"
 SELECT DISTINCT
 	category,
 	subcategory,
@@ -78,15 +95,15 @@ ORDER BY 1,2,3
 
 /*
 =======================
-ExploraÁ„o das datas
+Explora√ß√£o das datas
 =======================
 Identificar as datas (limites) mais antigas e mais recentes.
 
-Compreender o escopo dos dados e o perÌodo de tempo abrangido.
+Compreender o escopo dos dados e o per√≠odo de tempo abrangido.
 */
 
--- Encontre os dados do primeiro e do ˙ltimo pedido
--- Quantos anos de venda est„o disponÌveis
+-- Encontre os dados do primeiro e do √∫ltimo pedido
+-- Quantos anos de venda est√£o dispon√≠veis
 SELECT
 	MIN(order_date) AS data_primeiro_pedido,
 	MAX(order_date) AS data_ultimo_pedido,
@@ -94,7 +111,7 @@ SELECT
 FROM gold.fact_sales
 -- data_primeiro_pedido 2010-12-29
 -- data_ultimo_pedido   2014-01-28
--- intervalo_pedido_mes 37 | 3 anos e 1 mÍs
+-- intervalo_pedido_mes 37 | 3 anos e 1 m√™s
 
 -- Encontre o cliente mais jovem e o mais velho
 SELECT
@@ -108,11 +125,11 @@ FROM gold.dim_customers;
 
 /*
 ======================
-ExploraÁ„o de MÈtricas
+Explora√ß√£o de M√©tricas
 ======================
-Calcular a mÈtrica principal do negÛcio (big numbers)
+Calcular a m√©trica principal do neg√≥cio (big numbers)
 
-NÌvel Mais Alto de AgregaÁ„o | NÌvel Mais Baixo de Detalhes
+N√≠vel Mais Alto de Agrega√ß√£o | N√≠vel Mais Baixo de Detalhes
 */
 
 -- Descobrir o total de vendas
@@ -127,7 +144,7 @@ SELECT
 FROM gold.fact_sales;
 -- total_itens_vendidos 60.423
 
--- Descobir o preÁo mÈdio de venda
+-- Descobir o pre√ßo m√©dio de venda
 SELECT
 	AVG(price) as preco_medio_venda
 FROM gold.fact_sales;
@@ -153,7 +170,7 @@ SELECT
 FROM gold.fact_sales;
 -- total_cliente 18.484
 
--- Criando um relatÛrio que mostre todas as principais mÈtricas do negÛcio.
+-- Criando um relat√≥rio que mostre todas as principais m√©tricas do neg√≥cio.
 SELECT
 	'Venta Total' as nome_metrica,
 	CAST(SUM(sales_amount) AS DECIMAL(10,2)) AS valor_metrica
@@ -165,7 +182,7 @@ SELECT
 FROM gold.fact_sales
 UNION ALL
 SELECT
-	'PreÁo MÈdio',
+	'Pre√ßo M√©dio',
 	CAST(AVG(price) AS DECIMAL(10,2))
 FROM gold.fact_sales
 UNION ALL
@@ -187,7 +204,7 @@ FROM gold.fact_sales;
   nome_metrica             | valor_metrica
 - Venda Total              | 29.356.250,00  
 - Quantidade Total         | 60.423
-- PreÁo MÈdio              | 486,00
+- Pre√ßo M√©dio              | 486,00
 - Pedidos Totais           | 27.659
 - Total Produtos Distintos | 130
 - Total Clientes Distintos | 18.484
@@ -196,13 +213,13 @@ FROM gold.fact_sales;
 
 /*
 ========================
-An·lise de Magnitude
+An√°lise de Magnitude
 ========================
 Comparar os valores das medidas por categorias
-Isso nos ajuda a entender a import‚ncia de diferentes categorias
+Isso nos ajuda a entender a import√¢ncia de diferentes categorias
 */
 
--- Encontre o total de clientes por paÌs
+-- Encontre o total de clientes por pa√≠s
 SELECT
 	ROW_NUMBER() OVER (ORDER BY COUNT(customer_id) DESC) AS classificacao,
 	country,
@@ -237,7 +254,7 @@ classificacao  | category	| total_prod
 	4	       |Accessories	|	29
 	5	       |NULL	    |	7
 */
--- Quais s„o os custos mÈdios em cada categoria?
+-- Quais s√£o os custos m√©dios em cada categoria?
 SELECT
 	ROW_NUMBER() OVER(ORDER BY AVG(cost) DESC) AS classificacao,
 	category,
@@ -254,7 +271,7 @@ classificacao |category		|custo_medio
 	4		  | Accessories	| 13.00
 */
 
--- Qual È a receita total gerada para cada categoria?
+-- Qual √© a receita total gerada para cada categoria?
 SELECT
 	RANK() OVER(ORDER BY SUM(a.sales_amount) DESC) AS ranking,
 	b.category,
@@ -300,7 +317,7 @@ classificacao | customer_key | nome_cliente			| total_receita
 	10		  |  434		 |  Maurice Shan		|  12.914,00 
 */
 
--- Qual È a distribuiÁ„o dos itens vendidos entre os paÌses?
+-- Qual √© a distribui√ß√£o dos itens vendidos entre os pa√≠ses?
 SELECT
 	ROW_NUMBER() OVER(ORDER BY SUM(a.quantity) DESC) AS classificacao,
 	b.country,
@@ -320,7 +337,7 @@ GROUP BY b.country;
   7             | n/a            | 871,00        
 */
 
--- Total de vendas por paÌs
+-- Total de vendas por pa√≠s
 SELECT 
 	ROW_NUMBER() OVER(ORDER BY SUM(a.sales_amount) DESC) AS classificacao,
 	b.country, 
@@ -347,7 +364,7 @@ WITH cte AS (
 		ROW_NUMBER() OVER(
 			ORDER BY 
 				COUNT(DISTINCT a.order_number) DESC, 
-				SUM(a.sales_amount) DESC -- A soma do sales_amount È calculada para usar no desempate.
+				SUM(a.sales_amount) DESC -- A soma do sales_amount √© calculada para usar no desempate.
 				) AS classificacao, 
 		b.customer_key,
 		CONCAT(b.first_name, ' ', b.last_name) AS nome_cliente,
@@ -369,7 +386,7 @@ WHERE classificacao <= 3;
  3             | 186          | Ashley Henderson | 27           | 1.616,00
 */
 
--- Quais s„o os 5 produtos que geram a maior receita?
+-- Quais s√£o os 5 produtos que geram a maior receita?
 SELECT
 	*
 FROM (
@@ -393,7 +410,7 @@ WHERE classificacao <= 5;
  5             | 120         | Mountain-200 Black- 38     | 1.294.854,00
 */
 
--- Quais s„o os 5 produtos com pior desempenho em termos de vendas?
+-- Quais s√£o os 5 produtos com pior desempenho em termos de vendas?
 SELECT
 	*
 FROM (
@@ -417,8 +434,8 @@ WHERE classificacao <= 5;
  5             | 291         | Touring Tire Tube          | 7.440,00
 */
 
--- SEM FUN«√O DE JANELA (WINDOW FUNCTIONS)
--- Quais s„o as MELHORES 5 subcategorias que geram a MAIOR receita?
+-- SEM FUN√á√ÉO DE JANELA (WINDOW FUNCTIONS)
+-- Quais s√£o as MELHORES 5 subcategorias que geram a MAIOR receita?
 SELECT TOP 5
 	p.subcategory,
 	CAST(SUM(f.sales_amount) AS DECIMAL(10,2)) as total_venda
@@ -436,7 +453,7 @@ ORDER BY total_venda DESC;
  Helmets           | 225.435,00
 */
 
--- Quais s„o as PIORES 5 subcategorias que geram a MENOR receita?
+-- Quais s√£o as PIORES 5 subcategorias que geram a MENOR receita?
 SELECT TOP 5
 	p.subcategory,
 	CAST(SUM(f.sales_amount) AS DECIMAL(10,2)) as total_venda
@@ -452,4 +469,5 @@ ORDER BY total_venda ;
  Caps          | 19.710,00
  Gloves        | 34.320,00
  Vests         | 36.160,00
+
 */
