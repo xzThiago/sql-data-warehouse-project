@@ -85,3 +85,14 @@ Desenvolver análises baseadas em **SQL** para fornecer insights detalhados sobr
 - **Tendências de Vendas**  
 
 Esses insights capacitam os stakeholders com métricas-chave do negócio, apoiando decisões estratégicas.
+
+### 📁 Scripts de Análise
+
+- 🔎 **Exploratory Data Analysis (EDA)**  
+  Análise exploratória inicial para compreender estrutura dos dados, valores únicos, dimensões, períodos e métricas principais.  
+  ➜ [Abrir Script](scripts/data_analytics/Exploratory_Data_Analysis_EDA.sql)
+
+- 📈 **Advanced Data Analysis**  
+  Análises avançadas utilizando técnicas como tendências temporais, métricas cumulativas, análise de desempenho, análise proporcional e segmentação.  
+  ➜ [Abrir Script](scripts/data_analytics/SQL_Advanced_Data_Analytics.sql)
+
