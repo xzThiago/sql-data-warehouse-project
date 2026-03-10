@@ -5,7 +5,7 @@ Este projeto demonstra uma solução completa de *data warehousing* e análise d
 
 ---
 
-## 🏗️ Arquitetura de Dados
+## Arquitetura de Dados
 
 A arquitetura de dados deste projeto segue o padrão **Medallion Architecture**, composta pelas camadas **Bronze, Silver e Gold**.
 ![](https://github.com/xzThiago/sql-data-warehouse-project/blob/main/docs/arquitetura_datawarehouse.png)
@@ -24,7 +24,7 @@ A arquitetura de dados deste projeto segue o padrão **Medallion Architecture**,
 
 ---
 
-## 📖 Visão Geral do Projeto
+## Visão Geral do Projeto
 
 Este projeto envolve:
 
@@ -35,7 +35,7 @@ Este projeto envolve:
 
 ---
 
-## 🎯 Público-Alvo e Competências Demonstradas
+## Público-Alvo e Competências Demonstradas
 
 Este repositório é um excelente recurso para profissionais e estudantes que desejam demonstrar conhecimento em:
 
@@ -48,7 +48,7 @@ Este repositório é um excelente recurso para profissionais e estudantes que de
 
 ---
 
-## 🛠️ Ferramentas e Recursos Utilizados
+## Ferramentas e Recursos Utilizados
 
 > **Tudo utilizado neste projeto é gratuito**
 
@@ -59,14 +59,14 @@ Este repositório é um excelente recurso para profissionais e estudantes que de
 - **DrawIO:** Criação de diagramas de arquitetura, modelos e fluxos de dados.
 ---
 
-## 🚀 Requisitos do Projeto
+## Requisitos do Projeto
 
-### 🏗️ Construção do Data Warehouse (Data Engineering)
+### Construção do Data Warehouse (Data Engineering)
 
-#### 🎯 Objetivo
+#### Objetivo
 Desenvolver um data warehouse moderno utilizando **SQL Server** para consolidar dados de vendas, permitindo análises e suporte à tomada de decisão.
 
-#### 📌 Especificações
+#### Especificações
 - **Fontes de Dados:** Importação de dados de dois sistemas de origem (**ERP** e **CRM**) fornecidos em arquivos CSV.
 - **Qualidade dos Dados:** Limpeza, padronização e tratamento de inconsistências antes da análise.
 - **Integração:** Consolidação das fontes em um único modelo de dados otimizado para consultas analíticas.
@@ -75,9 +75,9 @@ Desenvolver um data warehouse moderno utilizando **SQL Server** para consolidar 
 
 ---
 
-### 📊 BI: Analytics e Relatórios (Data Analysis)
+### BI: Analytics e Relatórios (Data Analysis)
 
-#### 🎯 Objetivo
+#### Objetivo
 Desenvolver análises baseadas em **SQL** para fornecer insights detalhados sobre:
 
 - **Comportamento dos Clientes**
@@ -86,13 +86,13 @@ Desenvolver análises baseadas em **SQL** para fornecer insights detalhados sobr
 
 Esses insights capacitam os stakeholders com métricas-chave do negócio, apoiando decisões estratégicas.
 
-### 📁 Scripts de Análise
+### Scripts de Análise
 
-- 🔎 **Exploratory Data Analysis (EDA)**  
+-  **Exploratory Data Analysis (EDA)**  
   Análise exploratória inicial para compreender estrutura dos dados, valores únicos, dimensões, períodos e métricas principais.  
   ➜ [Abrir Script](scripts/data_analytics/Exploratory_Data_Analysis_EDA_.sql)
 
-- 📈 **Advanced Data Analysis**  
+-  **Advanced Data Analysis**  
   Análises avançadas utilizando técnicas como tendências temporais, métricas cumulativas, análise de desempenho, análise proporcional e segmentação.  
   ➜ [Abrir Script](scripts/data_analytics/SQL_Advanced_Data_Analytics.sql)
 
